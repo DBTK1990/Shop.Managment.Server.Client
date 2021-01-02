@@ -28,11 +28,10 @@ namespace MainApp
         {
             #region Init My Services
             services.AddAppDbContext(Configuration);
-            services.AddMySecurity(Configuration); 
+            services.AddMySecurity(Configuration);
+            services.AddClientReact();
             #endregion
             services.AddControllers();
-            
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,13 +49,16 @@ namespace MainApp
 
 
             #endregion
+            #region Init React Client App
+            app.InitClientAppReact(env.IsDevelopment()); 
+            #endregion
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
 
             app.UseEndpoints(endpoints =>
             {

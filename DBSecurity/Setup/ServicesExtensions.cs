@@ -11,7 +11,7 @@ namespace Security.Setup
 {
     public static class ServicesExtensions
     {
-        public static void SetupSecurity(this IServiceCollection services, IConfiguration config)
+        public static void AddMySecurity(this IServiceCollection services, IConfiguration config)
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(config.GetConnectionString("ConnStr")));
 

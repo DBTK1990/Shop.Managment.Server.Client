@@ -18,7 +18,7 @@ namespace BL.Setup
             app.UseSpaStaticFiles();
             app.UseSpa(spa =>
             {
-                spa.Options.SourcePath = "ClientApp";
+                spa.Options.SourcePath = "ClientApp/appoinment-client";
                 if (IsDevelopment)
                 {
                     //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");

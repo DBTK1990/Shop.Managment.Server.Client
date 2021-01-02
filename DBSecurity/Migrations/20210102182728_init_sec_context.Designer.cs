@@ -10,8 +10,8 @@ using Security.Authentication;
 namespace Security.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210102073944_init")]
-    partial class init
+    [Migration("20210102182728_init_sec_context")]
+    partial class init_sec_context
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

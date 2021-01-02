@@ -31,6 +31,7 @@ namespace MainApp
             services.AddMySecurity(Configuration); 
             #endregion
             services.AddControllers();
+            
 
         }
 
@@ -53,8 +54,9 @@ namespace MainApp
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
+            
 
             app.UseEndpoints(endpoints =>
             {

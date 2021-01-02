@@ -43,12 +43,12 @@ namespace BL.Controllers
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
             var res = _context.Appointments.FirstOrDefault(el => el.UserId.Equals(user.Id) && el.Id.Equals(id));
 
-            if (res!=null)
+            if (res != null)
             {
                 return Ok(res);
             }
-            
-            return NotFound();
+
+            return NotFound(new { massege = $"id {id} dosen't exist for this user or id doesn't exist" });
 
         }
         //post
@@ -57,22 +57,22 @@ namespace BL.Controllers
         [Route("create")]
         public async Task<IActionResult> Create([FromBody] Appointment new_doc)
         {
-            if (!string.IsNullOrWhiteSpace(new_doc.Username)) 
+            if (!string.IsNullOrWhiteSpace(new_doc.Username))
             {
-                return BadRequest(new { massege = "remove username from request body"});
+                return BadRequest(new { massege = "remove username from request body" });
             }
 
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             new_doc.UserId = user.Id;
             new_doc.Username = user.UserName;
-            
+
             _context.Appointments.Add(new_doc);
-            
+
             int res = _context.SaveChanges();
 
 
-            if (res > 0) 
+            if (res > 0)
             {
                 return Ok(res);
             }
@@ -85,7 +85,7 @@ namespace BL.Controllers
         //todo:editing appoinment->only this user
         [HttpPut]
         [Route("edit/{id}")]
-        public async Task<IActionResult> Edit([FromBody] Appointment new_doc,int id) 
+        public async Task<IActionResult> Edit([FromBody] Appointment new_doc, int id)
         {
             if (!string.IsNullOrWhiteSpace(new_doc.Username))
             {
@@ -103,13 +103,11 @@ namespace BL.Controllers
             {
                 ref_doc.Date_Set = new_doc.Date_Set;
                 _context.SaveChanges();
-            }
-            else 
-            {
-                return NotFound(new { massege = $"id {id} dosen't exist for this user or id doesn't exist" });
+                return Ok(ref_doc);
             }
 
-            return Ok(ref_doc);
+            return NotFound(new { massege = $"id {id} dosen't exist for this user or id doesn't exist" });
+
         }
 
 
@@ -127,11 +125,11 @@ namespace BL.Controllers
             {
                 _context.Appointments.Remove(ref_doc);
                 _context.SaveChanges();
-                
+
                 return Ok(ref_doc);
             }
 
-            return NotFound();
+            return NotFound(new { massege = $"id {id} dosen't exist for this user or id doesn't exist" });
         }
     }
 }

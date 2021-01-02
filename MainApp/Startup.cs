@@ -11,7 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-
+using BL.Setup;
+using Security.Setup;
 namespace MainApp
 {
     public class Startup
@@ -26,9 +27,12 @@ namespace MainApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            #region Init My Services
+            services.AddAppDbContext(Configuration);
+            services.AddMySecurity(Configuration); 
+            #endregion
             services.AddControllers();
-        
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,12 +43,20 @@ namespace MainApp
                 app.UseDeveloperExceptionPage();
             }
 
+            #region Init EF databases by pendding migration
+
+            app.InitAppDatabase();
+            app.InitSecurityDatabase();
+
+
+            #endregion
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

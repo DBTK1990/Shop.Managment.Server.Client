@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BL.Migrations
 {
-    public partial class init : Migration
+    public partial class init_app_context : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,8 +14,8 @@ namespace BL.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date_Set = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ClientId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Date_Inserted = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Date_Inserted = table.Column<DateTime>(type: "datetime2", nullable: false,defaultValueSql:"GETDATE()")
                 },
                 constraints: table =>
                 {

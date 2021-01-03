@@ -36,7 +36,7 @@ namespace Security.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {      
             var user = await userManager.FindByNameAsync(model.Username);
-    
+
             if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
             {
                 var userRoles = await userManager.GetRolesAsync(user);
@@ -57,16 +57,16 @@ namespace Security.Controllers
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(3),
+                    expires: DateTime.Now.AddDays(1),
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
-                var test = new JwtSecurityTokenHandler();
-                var token2 = test.WriteToken(token);
+                var handler = new JwtSecurityTokenHandler();
+           
                
                 return Ok(new
                 {
-                    token = token2,
+                    token = handler.WriteToken(token),
                     expiration = token.ValidTo
                 });
             }
@@ -81,6 +81,7 @@ namespace Security.Controllers
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
             try
             {
+                
                  tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,

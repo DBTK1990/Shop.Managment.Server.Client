@@ -1,8 +1,7 @@
 import { LoginModel, RegisterModel } from "./AuthModel";
 
-export class AuthService {
+class AuthService {
   constructor() {
-    super();
     this.baseAddress = "https://localhost:5001/";
     this.controllerUri = "v1/api/Authenticate/";
     this.paths = ["login", "refresh", "validate", "register"];
@@ -98,3 +97,5 @@ export class AuthService {
     return response;
   }
 }
+
+export default new AuthService();

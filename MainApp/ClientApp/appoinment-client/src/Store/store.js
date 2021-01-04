@@ -1,4 +1,8 @@
-import { createStore } from "redux";
-import { countReducer } from "./Slices/TokenSlice";
+import { combineReducers, createStore } from "redux";
+import TokenReducer from "./Slices/TokenSlice";
 
-export const store = createStore(countReducer);
+const rootReducer = combineReducers({
+  token: TokenReducer,
+});
+
+export const store = createStore(rootReducer);

@@ -49,9 +49,7 @@ namespace MainApp
 
 
             #endregion
-            #region Init React Client App
-            app.InitClientAppReact(env.IsDevelopment()); 
-            #endregion
+          
 
             app.UseHttpsRedirection();
 
@@ -64,6 +62,9 @@ namespace MainApp
             {
                 endpoints.MapControllers();
             });
+            #region Init React Client App
+            app.InitClientAppReact(env.IsDevelopment());
+            #endregion
         }
     }
 }

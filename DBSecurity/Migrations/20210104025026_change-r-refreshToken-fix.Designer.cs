@@ -10,8 +10,8 @@ using Security.Authentication;
 namespace Security.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210102182728_init_sec_context")]
-    partial class init_sec_context
+    [Migration("20210104025026_change-r-refreshToken-fix")]
+    partial class changerrefreshTokenfix
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -217,6 +217,24 @@ namespace Security.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Security.Authentication.RefreshToken", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("refreshes");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -266,6 +284,20 @@ namespace Security.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Security.Authentication.RefreshToken", b =>
+                {
+                    b.HasOne("Security.Authentication.ApplicationUser", "User")
+                        .WithMany("RefreshToken")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Security.Authentication.ApplicationUser", b =>
+                {
+                    b.Navigation("RefreshToken");
                 });
 #pragma warning restore 612, 618
         }

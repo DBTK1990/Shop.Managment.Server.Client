@@ -215,6 +215,24 @@ namespace Security.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Security.Authentication.RefreshToken", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("refreshes");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -264,6 +282,20 @@ namespace Security.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Security.Authentication.RefreshToken", b =>
+                {
+                    b.HasOne("Security.Authentication.ApplicationUser", "User")
+                        .WithMany("RefreshToken")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Security.Authentication.ApplicationUser", b =>
+                {
+                    b.Navigation("RefreshToken");
                 });
 #pragma warning restore 612, 618
         }

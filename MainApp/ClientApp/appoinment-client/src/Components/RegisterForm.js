@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import { connect } from "react-redux";
-import { registerClose } from "../Store/Slices/TokenSlice";
+import { registerClose } from "../Store/Slices/siteSlice";
 class RegisterForm extends React.Component {
   constructor(props) {
     super();

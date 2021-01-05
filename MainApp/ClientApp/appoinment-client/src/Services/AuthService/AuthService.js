@@ -8,25 +8,19 @@ class AuthService {
   }
 
   async getTokenByLoginCredentials(login_model) {
-    var response = null;
-    try {
-      if (!(login_model instanceof LoginModel)) {
-        throw new Error("function signature prop is not from type LoginModel");
-      }
-      var url = `${this.baseAddress}${this.controllerUri}${this.paths[0]}`;
-      var requestOptions = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(login_model),
-      };
-      response = await fetch(url, requestOptions);
-      return response;
-    } catch (err) {
-      response = err;
+    if (!(login_model instanceof LoginModel)) {
+      throw new Error("function signature prop is not from type LoginModel");
     }
-    return response;
+    var url = `${this.baseAddress}${this.controllerUri}${this.paths[0]}`;
+    var requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(login_model),
+    };
+
+    return await fetch(url, requestOptions);
   }
 
   async getTokenByRefreshToken(ref_token) {

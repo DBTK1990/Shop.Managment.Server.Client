@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import { connect } from "react-redux";
+import { Redirect, withRouter } from "react-router-dom";
 import { RegisterModel } from "../Services/AuthService/AuthModel";
 import { authThunk } from "../Store/Reducers/authReducers";
 import { registerClose } from "../Store/Slices/siteSlice";
@@ -17,7 +18,8 @@ class RegisterForm extends React.Component {
     this.props.registerClose();
   };
   render() {
-    return (
+    const { isAuth } = this.props;
+    return !isAuth ? (
       <div
         className="card p-3"
         style={{
@@ -59,11 +61,15 @@ class RegisterForm extends React.Component {
           </Form.Row>
         </Form>
       </div>
+    ) : (
+      <Redirect to="/homepage"></Redirect>
     );
   }
 }
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    isAuth: state.token.isAuthenticated,
+  };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -75,4 +81,6 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(RegisterForm)
+);

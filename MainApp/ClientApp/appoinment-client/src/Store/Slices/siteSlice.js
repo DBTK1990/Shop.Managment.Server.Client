@@ -20,9 +20,18 @@ const siteSlice = createSlice({
         date: null,
       },
     },
+    error_model: {
+      show: false,
+      heading: null,
+      body: null,
+    },
     table_page_num: 1,
     errorMsg: null,
     rows_data: [],
+    pagerQuery: {
+      filter: "date",
+      order: 1,
+    },
   },
   reducers: {
     // standard reducer logic, with auto-generated action types per reducer
@@ -42,13 +51,31 @@ const siteSlice = createSlice({
       state.appointment_model.show = true;
       state.appointment_model.mode = payload.mode;
       state.appointment_model.form.id = payload.id;
-      state.appointment_model.form.date = payload.date;
+      state.appointment_model.form.date = payload.date
+        ? new Date(payload.date)
+        : null;
     },
     closeAppointmentModel(state) {
       state.appointment_model.show = false;
       state.appointment_model.mode = "new";
       state.appointment_model.form.id = null;
       state.appointment_model.form.date = null;
+    },
+    showError(state, { payload }) {
+      state.error_model.show = true;
+      state.error_model.heading = payload.heading;
+      state.error_model.body = payload.body;
+    },
+    closeError(state, { payload }) {
+      state.error_model.show = false;
+      state.error_model.heading = null;
+      state.error_model.body = null;
+    },
+    filterTableToggle(state, { payload }) {
+      if (state.pagerQuery.filter !== payload) {
+        state.pagerQuery.filter = payload;
+      }
+      state.pagerQuery.order = state.pagerQuery.order === 1 ? 0 : 1;
     },
     logout(state) {
       state.isAuthenticated = false;
@@ -65,5 +92,8 @@ export const {
   openAppointmentModel,
   closeAppointmentModel,
   logout,
+  showError,
+  closeError,
+  filterTableToggle,
 } = siteSlice.actions;
 export default siteSlice.reducer;

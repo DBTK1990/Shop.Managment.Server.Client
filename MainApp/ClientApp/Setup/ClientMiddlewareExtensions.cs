@@ -19,9 +19,9 @@ namespace BL.Setup
                 spa.Options.SourcePath = "ClientApp/appoinment-client";
                 if (IsDevelopment)
                 {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+                    //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
 
-                    //spa.UseReactDevelopmentServer(npmScript: "start");
+                    spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
             return app;

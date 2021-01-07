@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using BL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -26,24 +27,55 @@ namespace BL.Controllers
         }
         //get
         //todo:get list of all appoinment
-        [HttpGet]
+        [HttpPost]
         [Route("pager/{page_number}")]
-        public async Task<IActionResult> Pager([FromRoute] int page_number)
+        public async Task<IActionResult> Pager(int page_number, [FromBody] pagerQuery data)
         {
+
             if (page_number < 1)
             {
-                return BadRequest();
+                return BadRequest(new { errorcode = 15, error = $"page number cant be below or equal to zero" });
             }
 
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
-            
+
             page_number--;
-            var res = _context.Appointments.Skip(page_number * 10).Take(10).OrderBy(el=>el.Date_Set).ToList();
+            var query = _context.Appointments;
+
+            IOrderedQueryable<Appointment> res = null;
+            if (data.Filter.Equals("date"))
+            {
+                if (data.Order == 1)
+                {
+                    res = query.OrderBy(el => el.Date_Set);
+                }
+                else
+                {
+                    res = query.OrderByDescending(el => el.Date_Set);
+
+                }
+            }
+            else if (data.Filter.Equals("name"))
+            {
+                if (data.Order == 1)
+                {
+                    res = query.OrderBy(el => el.Username);
+                }
+                else
+                {
+                    res = query.OrderByDescending(el => el.Username);
+
+                }
+
+
+            }
+
+
             return Ok(new
             {
-                appointment_list=res,
-                page_count=Math.Ceiling(_context.Appointments.Count()/10.0)
-            }) ;
+                appointment_list = res.AsEnumerable().Skip(page_number * 10).Take(10).ToList(),
+                page_count = Math.Ceiling(_context.Appointments.Count() / 10.0)
+            });
 
 
         }
@@ -61,7 +93,7 @@ namespace BL.Controllers
                 return Ok(res);
             }
 
-            return NotFound(new { massege = $"id {id} dosen't exist for this user or id doesn't exist" });
+            return NotFound(new { errorcode = 14, error = $"id {id} dosen't exist for this user or id doesn't exist" });
 
         }
         //post
@@ -72,15 +104,15 @@ namespace BL.Controllers
         {
             if (!string.IsNullOrWhiteSpace(new_doc.Username))
             {
-                return BadRequest(new { massege = "remove username from request body" });
+                return BadRequest(new { errorcode = 11, error = "remove username from request body" });
             }
             else if (_context.Appointments.Any(el => el.Date_Set <= new_doc.Date_Set && new_doc.Date_Set <= el.Date_Set.AddMinutes(45)))
             {
-                return Conflict(new { error = "appoinment has allready been set in the time range" });
+                return Conflict(new { errorcode = 12, error = "appoinment has allready been set in the time range" });
             }
-            else if (new_doc.Date_Set > DateTime.Now) 
+            else if (new_doc.Date_Set < DateTime.Now)
             {
-                return Conflict(new { error = "we dont have a time machine yet..." });
+                return Conflict(new { errorcode = 13, error = "we dont have a time machine yet..." });
             }
 
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -88,7 +120,7 @@ namespace BL.Controllers
             new_doc.UserId = user.Id;
             new_doc.Username = user.UserName;
 
-           
+
             _context.Appointments.Add(new_doc);
 
             int res = _context.SaveChanges();
@@ -111,7 +143,15 @@ namespace BL.Controllers
         {
             if (!string.IsNullOrWhiteSpace(new_doc.Username))
             {
-                return BadRequest(new { massege = "remove username from request body" });
+                return BadRequest(new { errorcode = 11, error = "remove username from request body" });
+            }
+            else if (_context.Appointments.Any(el => el.Date_Set <= new_doc.Date_Set && new_doc.Date_Set <= el.Date_Set.AddMinutes(45)))
+            {
+                return Conflict(new { errorcode = 12, error = "appoinment has allready been set in the time range" });
+            }
+            else if (new_doc.Date_Set < DateTime.Now)
+            {
+                return Conflict(new { errorcode = 13, error = "we dont have a time machine yet..." });
             }
 
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -128,7 +168,7 @@ namespace BL.Controllers
                 return Ok(ref_doc);
             }
 
-            return NotFound(new { massege = $"id {id} dosen't exist for this user or id doesn't exist" });
+            return NotFound(new { errorcode = 14, error = $"id {id} dosen't exist for this user or id doesn't exist" });
 
         }
 
@@ -141,17 +181,16 @@ namespace BL.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
-            var ref_doc = _context.Appointments.FirstOrDefault(el => el.UserId.Equals(user.Id) && el.Id.Equals(id));
 
-            if (ref_doc != null)
+            var ref_doc_remove_from_entity = _context.Appointments.FirstOrDefault(el => el.UserId.Equals(user.Id) && el.Id.Equals(id));
+            var ref_doc = _context.Database.ExecuteSqlInterpolated($"exec [dbo].DeleteAppointment {id} ,'{user.Id}'");
+            if (ref_doc_remove_from_entity != null)
             {
-                _context.Appointments.Remove(ref_doc);
-                _context.SaveChanges();
-
+                _context.Appointments.Remove(ref_doc_remove_from_entity);
                 return Ok(ref_doc);
             }
 
-            return NotFound(new { massege = $"id {id} dosen't exist for this user or id doesn't exist" });
+            return NotFound(new { errorcode = 14, error = $"id {id} dosen't exist for this user or id doesn't exist" });
         }
     }
 }

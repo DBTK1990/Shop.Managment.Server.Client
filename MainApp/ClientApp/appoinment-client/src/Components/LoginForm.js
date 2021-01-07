@@ -39,7 +39,6 @@ class LoginForm extends React.Component {
         style={{
           width: "300px",
           margin: "auto",
-
           background: "rgb(89 99 102 / 23%)",
         }}
       >
@@ -66,15 +65,10 @@ class LoginForm extends React.Component {
               </Button>
             </Col>
           </Form.Row>
-          <Form.Row style={{ display: this.state.isFail ? "flex" : "none" }}>
-            <Col lg="6">
-              <p>{this.state.errorMsg}</p>
-            </Col>
-          </Form.Row>
         </Form>
       </div>
     ) : (
-      <Redirect to="home"></Redirect>
+      <Redirect to="homepage"></Redirect>
     );
   }
 }

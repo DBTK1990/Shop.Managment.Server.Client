@@ -3,6 +3,7 @@ import { Button, Form, Modal } from "react-bootstrap";
 import { connect } from "react-redux";
 import { appointmentThunk } from "../Store/Reducers/AppointmentReducers";
 import { closeAppointmentModel } from "../Store/Slices/siteSlice";
+import datetime from "date-and-time";
 
 class Popup extends Component {
   constructor(props) {
@@ -10,23 +11,27 @@ class Popup extends Component {
 
     this.state = {
       show: props.show,
-      date: props.form_edit.date ?? new Date(),
+      date: props.mode === "new" ? new Date() : props.form_edit.date,
     };
   }
-  ConvertToDatetimeHtmlValue = (date) => date.toJSON().replace(/\.[^Z]+Z/, "");
+  ConvertToDatetimeHtmlValue = (date) =>
+    datetime.format(date, "YYYY-MM-DDTHH:mm:ss");
 
   handelSubmit = (e) => {
-    const { mode, id } = this.props.form_edit;
+    const { mode, form_edit } = this.props;
     var value = e.target[0].value;
     if (mode === "new") {
       this.props.onSave(value);
     } else {
-      this.props.onSave(id, value);
+      this.props.onSave(form_edit.id, this.state.date);
     }
     this.props.closeAppointmentModel();
     e.preventDefault();
   };
-
+  handleChange = (e) => {
+    const { value } = e.currentTarget;
+    this.setState({ date: new Date(value) });
+  };
   render() {
     return (
       <Modal

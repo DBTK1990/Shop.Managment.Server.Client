@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { connect } from "react-redux";
+import ErrorAlert from "../../Components/ErrorAlert";
 
 import Popup from "../../Components/Popup";
 import Table from "../../Components/TableControl/MyTable";
@@ -24,25 +25,35 @@ class AppointmentView extends Component {
       edit,
     } = this.props;
     return (
-      <div>
+      <Container>
+        <Row>
+          <Col>
+            <Button
+              className="my-4"
+              onClick={() => {
+                this.props.openAppointmentModel("new", null, null);
+              }}
+            >
+              Create new Appointment
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Table
+            align="center"
+            {...this.props}
+            row_data={row_data ?? []}
+            page_count={page_count ?? 1}
+          />
+        </Row>
         <Popup
+          row_data={row_data ?? []}
           show={appointment_model.show}
           mode={appointment_model.mode}
           onSave={appointment_model.mode === "new" ? create : edit}
         />
-        <Button
-          onClick={() => {
-            this.props.openAppointmentModel("new", null, null);
-          }}
-        >
-          Create new Appointment
-        </Button>
-        <Table
-          {...this.props}
-          row_data={row_data ?? []}
-          page_count={page_count ?? 1}
-        />
-      </div>
+        <ErrorAlert show={this.props.showError} />
+      </Container>
     );
   }
 }
@@ -51,11 +62,13 @@ const mapStateToProps = (state) => ({
   row_data: state.token.rows_data.appointment_list,
   page_count: state.token.rows_data.page_count,
   appointment_model: state.token.appointment_model,
+  showError: state.token.error_model.show,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    pager: (page_num) => dispatch(appointmentThunk.pager(page_num)),
+    pager: (page_num, filter, order) =>
+      dispatch(appointmentThunk.pager({ page_num, filter, order })),
     details: (id) => dispatch(appointmentThunk.details(id)),
     create: (date) => dispatch(appointmentThunk.create(date)),
     edit: (id, date) => dispatch(appointmentThunk.edit({ id, date })),

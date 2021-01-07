@@ -2,22 +2,27 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import appointment_api from "../../Services/AppointmentService";
 
 export const appointmentThunk = {
-  pager: createAsyncThunk("appointment/pager", async (page_num, thunkAPI) => {
-    try {
-      var { tokenResponse } = thunkAPI.getState().token;
-      var api = new appointment_api(tokenResponse.token);
-      var response = await api.getListByPage(page_num);
-      return {
-        data: response.data,
-        page_num,
-      };
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err);
+  pager: createAsyncThunk(
+    "appointment/pager",
+    async ({ page_num, filter_o, order_o }, thunkAPI) => {
+      try {
+        const { tokenResponse, pagerQuery } = thunkAPI.getState().token;
+        var api = new appointment_api(tokenResponse.token);
+        var filter = filter_o ? filter_o : pagerQuery.filter;
+        var order = order_o ? order_o : pagerQuery.order;
+        var response = await api.getListByPage(page_num, filter, order);
+        return {
+          data: response.data,
+          page_num,
+        };
+      } catch (err) {
+        return thunkAPI.rejectWithValue(err);
+      }
     }
-  }),
+  ),
   details: createAsyncThunk("appointment/details", async (id, thunkAPI) => {
     try {
-      var { tokenResponse } = thunkAPI.getState().token;
+      const { tokenResponse, pagerQuery } = thunkAPI.getState().token;
       var api = new appointment_api(tokenResponse.token);
       var response = await api.getDetailsById(id);
       return response.data;
@@ -27,10 +32,20 @@ export const appointmentThunk = {
   }),
   create: createAsyncThunk("appointment/create", async (date, thunkAPI) => {
     try {
-      var { tokenResponse, table_page_num } = thunkAPI.getState().token;
+      const {
+        tokenResponse,
+        pagerQuery,
+        table_page_num,
+      } = thunkAPI.getState().token;
       var api = new appointment_api(tokenResponse.token);
       var response = await api.create(date);
-      thunkAPI.dispatch(appointmentThunk.pager(table_page_num));
+      thunkAPI.dispatch(
+        appointmentThunk.pager({
+          page_num: table_page_num,
+          filter: pagerQuery.filter,
+          order: pagerQuery.order,
+        })
+      );
 
       return response.data;
     } catch (err) {
@@ -39,9 +54,21 @@ export const appointmentThunk = {
   }),
   edit: createAsyncThunk("appointment/edit", async ({ id, date }, thunkAPI) => {
     try {
-      var { tokenResponse } = thunkAPI.getState().token;
+      const {
+        tokenResponse,
+        pagerQuery,
+        table_page_num,
+      } = thunkAPI.getState().token;
       var api = new appointment_api(tokenResponse.token);
       var response = await api.edit(id, date);
+      thunkAPI.dispatch(
+        appointmentThunk.pager({
+          page_num: table_page_num,
+          filter: pagerQuery.filter,
+          order: pagerQuery.order,
+        })
+      );
+
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err);
@@ -49,10 +76,16 @@ export const appointmentThunk = {
   }),
   delete: createAsyncThunk("appointment/delete", async (id, thunkAPI) => {
     try {
-      var { tokenResponse, table_page_num } = thunkAPI.getState().token;
-      var api = new appointment_api(tokenResponse.token);
+      var { token, pagerQuery, table_page_num } = thunkAPI.getState();
+      var api = new appointment_api(token.tokenResponse.token);
       var response = await api.delete(id);
-      thunkAPI.dispatch(appointmentThunk.pager(table_page_num));
+      thunkAPI.dispatch(
+        appointmentThunk.pager({
+          page_num: table_page_num,
+          filter: pagerQuery.filter,
+          order: pagerQuery.order,
+        })
+      );
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err);
@@ -70,22 +103,34 @@ const appointmentExtraReducer = {
   },
   [appointmentThunk.pager.rejected]: (state, action) => {
     // Add user to the state array
-    state.isFail = true;
-    state.errorMsg = "error in pager";
+    var data = action.payload.response;
+    state.error_model.show = true;
+    state.error_model.heading = `${data.title}`;
+    state.error_model.body = data.error ?? data.message;
   },
-  [appointmentThunk.details.pending]: (state, action) => {
+  [appointmentThunk.delete.rejected]: (state, action) => {
     // Add user to the state array
-    state.isFail = false;
-  },
-  [appointmentThunk.details.fulfilled]: (state, action) => {
-    // Add user to the state array
+    var data = action.payload.response.data;
 
-    state.isAuthenticated = false;
+    state.error_model.show = true;
+    state.error_model.heading = `${data.title}`;
+    state.error_model.body = data.error ?? data.message;
   },
-  [appointmentThunk.details.rejected]: (state, action) => {
+  [appointmentThunk.edit.rejected]: (state, action) => {
     // Add user to the state array
-    state.isFail = true;
-    state.errorMsg = action.payload.message;
+    var data = action.payload.response.data;
+
+    state.error_model.show = true;
+    state.error_model.heading = `${data.title}`;
+    state.error_model.body = data.error ?? data.message;
+  },
+  [appointmentThunk.create.rejected]: (state, action) => {
+    // Add user to the state array
+    var data = action.payload.response.data;
+
+    state.error_model.show = true;
+    state.error_model.heading = `${data.title}`;
+    state.error_model.body = data.error ?? data.message;
   },
 };
 export default appointmentExtraReducer;

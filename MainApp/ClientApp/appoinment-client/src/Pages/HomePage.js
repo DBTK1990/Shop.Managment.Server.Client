@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Nav, Navbar, Row } from "react-bootstrap";
 import { connect } from "react-redux";
 import { Link, Route, Switch } from "react-router-dom";
+import ErrorAlert from "../Components/ErrorAlert";
 import Logout from "../Components/Logout";
 import { openLogout } from "../Store/Slices/siteSlice";
 import AppointmentView from "./Views/AppointmentView";
@@ -17,8 +18,9 @@ class HomePage extends React.Component {
   };
 
   render() {
+    console.log(this.props);
     return (
-      <div>
+      <div style={{ position: "relative" }}>
         <Logout show={this.props.logout_model}></Logout>
         <Navbar bg="dark" variant="dark">
           <Link className="navbar-brand" to="/home">
@@ -57,6 +59,7 @@ class HomePage extends React.Component {
     );
   }
 }
+
 const mapStateToProps = (state) => {
   return {
     logout_model: state.token.logout_model,

@@ -1,17 +1,11 @@
 import React from "react";
-
-import { useSelector } from "react-redux";
-import { Redirect, Route, Switch } from "react-router";
+import { Component } from "react";
+import { Route, Switch } from "react-router";
 import HomePage from "../Pages/HomePage";
 import LoginPage from "../Pages/LoginPage";
+import ProtectedPages from "./ProtectedPages";
 
-export default function ProtectedPages(props) {
-  let auth = useSelector((state) => state.token.isAuthenticated);
-
-  return auth ? props.children : <Redirect to="/login" />;
-}
-
-export class AuthRouter extends React.Component {
+class router extends Component {
   constructor(props) {
     super();
   }
@@ -35,3 +29,5 @@ export class AuthRouter extends React.Component {
     );
   }
 }
+
+export default router;

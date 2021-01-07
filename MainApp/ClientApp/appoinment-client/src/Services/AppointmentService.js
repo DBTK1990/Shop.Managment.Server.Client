@@ -12,10 +12,10 @@ export default class AppointmentService {
     };
   }
 
-  getListByPage(page_number) {
+  getListByPage(page_number, filter = "date", order = 1) {
     var url = `${this.baseAddress}${this.controllerUri}${this.paths[0]}/${page_number}`;
 
-    return axios.get(url, this.config);
+    return axios.post(url, { order, filter }, this.config);
   }
   getDetailsById(id) {
     var url = `${this.baseAddress}${this.controllerUri}${this.paths[1]}`;

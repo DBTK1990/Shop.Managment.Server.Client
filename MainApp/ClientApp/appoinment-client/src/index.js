@@ -3,15 +3,15 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import { Provider } from "react-redux";
 import App from "./App";
-import { ConnectedRouter } from "connected-react-router";
 import reportWebVitals from "./reportWebVitals";
-import { store, history } from "./Store/store";
+import { store } from "./Store/store";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
   <Provider store={store}>
-    <ConnectedRouter history={history}>
+    <BrowserRouter>
       <App />
-    </ConnectedRouter>
+    </BrowserRouter>
   </Provider>,
   document.getElementById("root")
 );

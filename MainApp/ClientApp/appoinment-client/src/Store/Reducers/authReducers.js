@@ -17,8 +17,8 @@ export const authThunk = {
     "token/register",
     async (register_model, thunkAPI) => {
       try {
-        var response = await auth.Register(register_model);
-        return response.data;
+        await auth.Register(register_model);
+        thunkAPI.dispatch(authThunk.login(register_model));
       } catch (err) {
         return thunkAPI.rejectWithValue(err);
       }
@@ -35,11 +35,6 @@ export const authThunk = {
 };
 
 const authExtraReducer = {
-  // Add reducers for additional action types here, and handle loading state as needed
-  [authThunk.login.pending]: (state, action) => {
-    // Add user to the state array
-    state.isFail = false;
-  },
   [authThunk.login.fulfilled]: (state, action) => {
     // Add user to the state array
 
@@ -50,27 +45,26 @@ const authExtraReducer = {
   },
   [authThunk.login.rejected]: (state, action) => {
     // Add user to the state array
-    state.isFail = true;
-    state.errorMsg =
-      action.payload.response.status === 400
-        ? action.payload.response.data.errors.Username.join(",")
-        : action.payload.response.data.errors.Password.join(",");
-  },
-  [authThunk.register.pending]: (state, action) => {
-    // Add user to the state array
     debugger;
-    state.isFail = false;
-  },
-  [authThunk.register.fulfilled]: (state, action) => {
-    // Add user to the state array
+    const { data } = action.payload.response;
 
-    state.isAuthenticated = false;
+    state.error_model.show = true;
+    state.error_model.heading = `${data.title}`;
+    state.error_model.body = data.errorData
+      ? data.errorData.join("\n")
+      : data.title ?? data.message;
   },
   [authThunk.register.rejected]: (state, action) => {
     // Add user to the state array
-    debugger;
-    state.isFail = true;
-    state.errorMsg = action.payload.message;
+
+    const { data } = action.payload.response;
+
+    state.error_model.show = true;
+    state.error_model.heading = `${data.title}`;
+    state.error_model.body = data.errorData
+      ? data.errorData.join("\n")
+      : data.title ?? data.message;
+    //state.errorMsg = action.payload.message;
   },
 };
 export default authExtraReducer;

@@ -1,66 +1,69 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { LoginModel } from "../../Services/AuthService/AuthModel";
-import auth from "../../Services/AuthService/AuthService";
-
-export const login = createAsyncThunk(
-  "token/login",
-  async (login_model, thunkAPI) => {
-    try {
-      const response = await auth.getTokenByLoginCredentials(login_model);
-      if (response.status === 401) {
-        throw Error("שם משתמש או סיסמא אינם נכונים");
-      }
-      return response.json().data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err);
-    }
-  }
-);
+import { createSlice } from "@reduxjs/toolkit";
+import appointmentExtraReducer from "../Reducers/AppointmentReducers";
+import authExtraReducer from "../Reducers/authReducers";
 
 // Then, handle actions in your reducers:
 const siteSlice = createSlice({
   name: "token",
   initialState: {
     tokenResponse: null,
-    isLoaded: false,
-    isFail: false,
     isAuthenticated: false,
-    register: false,
+    username: null,
+    isFail: false,
+    logout_model: false,
+    register_model: false,
+    appointment_model: {
+      show: false,
+      mode: "new",
+      form: {
+        id: null,
+        date: null,
+      },
+    },
+    table_page_num: 1,
     errorMsg: null,
+    rows_data: [],
   },
   reducers: {
     // standard reducer logic, with auto-generated action types per reducer
     registerOpen(state) {
-      state.register = true;
+      state.register_model = true;
     },
     registerClose(state) {
-      state.register = false;
+      state.register_model = false;
     },
-    showError(state, action) {
-      state.isFail = true;
-      state.errorMsg = action.payload;
+    openLogout(state) {
+      state.logout_model = true;
     },
-  },
-  extraReducers: {
-    // Add reducers for additional action types here, and handle loading state as needed
-    [login.pending]: (state, action) => {
-      // Add user to the state array
-      state.isFail = false;
-      state.isLoaded = true;
+    closeLogout(state) {
+      state.logout_model = false;
     },
-    [login.fulfilled]: (state, action) => {
-      // Add user to the state array
-      state.isLoaded = false;
-      state.tokenResponse = action.payload;
-      state.isAuthenticated = true;
+    openAppointmentModel(state, { payload }) {
+      state.appointment_model.show = true;
+      state.appointment_model.mode = payload.mode;
+      state.appointment_model.form.id = payload.id;
+      state.appointment_model.form.date = payload.date;
     },
-    [login.rejected]: (state, action) => {
-      // Add user to the state array
-      debugger;
-      state.isFail = true;
-      state.errorMsg = action.payload.message;
+    closeAppointmentModel(state) {
+      state.appointment_model.show = false;
+      state.appointment_model.mode = "new";
+      state.appointment_model.form.id = null;
+      state.appointment_model.form.date = null;
+    },
+    logout(state) {
+      state.isAuthenticated = false;
+      state.tokenResponse = null;
     },
   },
+  extraReducers: { ...authExtraReducer, ...appointmentExtraReducer },
 });
-export const { registerOpen, registerClose, showError } = siteSlice.actions;
+export const {
+  registerOpen,
+  registerClose,
+  openLogout,
+  closeLogout,
+  openAppointmentModel,
+  closeAppointmentModel,
+  logout,
+} = siteSlice.actions;
 export default siteSlice.reducer;

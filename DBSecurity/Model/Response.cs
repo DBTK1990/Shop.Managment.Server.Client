@@ -6,7 +6,7 @@ namespace Security.Authentication
     {
         public string Status { get; set; }
         public string Message { get; set; }
-        public List<string> Data { get ; set; }
+        public List<string> ErrorData { get; set; }
 
     }
 }

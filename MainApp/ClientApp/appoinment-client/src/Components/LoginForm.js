@@ -2,17 +2,25 @@ import React from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import { connect } from "react-redux";
 import { LoginModel } from "../Services/AuthService/AuthModel";
-import { registerOpen, login } from "../Store/Slices/siteSlice";
+import { registerOpen } from "../Store/Slices/siteSlice";
+import { Redirect } from "react-router-dom";
+import { authThunk } from "../Store/Reducers/authReducers";
+
 class LoginForm extends React.Component {
   constructor(props) {
     super();
     this.state = {
       isFail: props.isFail,
       errorMsg: null,
+      isAuth: false,
     };
   }
   static getDerivedStateFromProps(props, state) {
-    return { isFail: props.isFail, errorMsg: props.errorMsg };
+    return {
+      isFail: props.isFail,
+      errorMsg: props.errorMsg,
+      isAuth: props.isAuth,
+    };
   }
   handleSubmit = (event) => {
     var form = event.currentTarget;
@@ -20,43 +28,41 @@ class LoginForm extends React.Component {
     event.preventDefault();
   };
   handleRegister = (event) => {
-    var form = event.currentTarget;
-
     this.props.registerOpen();
   };
   render() {
-    console.log(this.props);
-    return (
+    const { isAuth } = this.props;
+
+    return !isAuth ? (
       <div
         className="card p-3"
         style={{
           width: "300px",
           margin: "auto",
-          textAlign: "right",
-          direction: "rtl",
+
           background: "rgb(89 99 102 / 23%)",
         }}
       >
         <Form onSubmit={this.handleSubmit}>
           <Form.Group controlId="formGroupEmail">
-            <Form.Label>שם משתמש</Form.Label>
-            <Form.Control type="text" placeholder="הכנס שם משתמש" />
+            <Form.Label>Username</Form.Label>
+            <Form.Control type="text" placeholder="Enter Username" />
           </Form.Group>
           <Form.Group controlId="formGroupPassword">
-            <Form.Label>סיסמא</Form.Label>
-            <Form.Control type="password" placeholder="סיסמא" />
+            <Form.Label>Password</Form.Label>
+            <Form.Control type="password" placeholder="Password" />
           </Form.Group>
           <Form.Row>
             <Col lg="6">
-              <Button type="submit">כניסה</Button>
+              <Button type="submit">Sign-In</Button>
             </Col>
             <Col>
               <Button
-                className="float-left"
+                className="float-right"
                 type="button"
                 onClick={this.handleRegister}
               >
-                הרשמה
+                Sign-up
               </Button>
             </Col>
           </Form.Row>
@@ -67,6 +73,8 @@ class LoginForm extends React.Component {
           </Form.Row>
         </Form>
       </div>
+    ) : (
+      <Redirect to="home"></Redirect>
     );
   }
 }
@@ -74,6 +82,7 @@ const mapStateToProps = (state) => {
   return {
     isFail: state.token.isFail,
     errorMsg: state.token.errorMsg,
+    isAuth: state.token.isAuthenticated,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -81,7 +90,7 @@ const mapDispatchToProps = (dispatch) => {
     registerOpen: () => dispatch(registerOpen()),
     login: (username, password) => {
       var login_model = new LoginModel(username, password);
-      return dispatch(login(login_model));
+      return dispatch(authThunk.login(login_model));
     },
   };
 };

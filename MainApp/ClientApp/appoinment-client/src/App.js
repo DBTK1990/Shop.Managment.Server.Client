@@ -1,23 +1,7 @@
-import logo from "./logo.svg";
 import "./App.css";
-import LoginPage from "./Pages/LoginPage";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-import { Row, Col, Container } from "react-bootstrap";
-
+import { AuthRouter } from "./Router/router";
 function App() {
-  return (
-    <Container>
-      <Row style={{ height: "25vh" }}></Row>
-      <Row></Row>
-      <Row>
-        <Col>
-          <LoginPage></LoginPage>
-        </Col>
-      </Row>
-      <Row></Row>
-    </Container>
-  );
+  return <AuthRouter></AuthRouter>;
 }
-
 export default App;

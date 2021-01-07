@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BL.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("v1/api/[controller]")]
     [ApiController]
     [Authorize]
     public class AppointmentsController : ControllerBase
@@ -27,11 +27,24 @@ namespace BL.Controllers
         //get
         //todo:get list of all appoinment
         [HttpGet]
-        [Route("all")]
-        public async Task<IActionResult> All()
+        [Route("pager/{page_number}")]
+        public async Task<IActionResult> Pager([FromRoute] int page_number)
         {
+            if (page_number < 1)
+            {
+                return BadRequest();
+            }
+
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
-            return Ok(_context.Appointments);
+            
+            page_number--;
+            var res = _context.Appointments.Skip(page_number * 10).Take(10).OrderBy(el=>el.Date_Set).ToList();
+            return Ok(new
+            {
+                appointment_list=res,
+                page_count=Math.Ceiling(_context.Appointments.Count()/10.0)
+            }) ;
+
 
         }
         //get
@@ -61,12 +74,21 @@ namespace BL.Controllers
             {
                 return BadRequest(new { massege = "remove username from request body" });
             }
+            else if (_context.Appointments.Any(el => el.Date_Set <= new_doc.Date_Set && new_doc.Date_Set <= el.Date_Set.AddMinutes(45)))
+            {
+                return Conflict(new { error = "appoinment has allready been set in the time range" });
+            }
+            else if (new_doc.Date_Set > DateTime.Now) 
+            {
+                return Conflict(new { error = "we dont have a time machine yet..." });
+            }
 
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             new_doc.UserId = user.Id;
             new_doc.Username = user.UserName;
 
+           
             _context.Appointments.Add(new_doc);
 
             int res = _context.SaveChanges();

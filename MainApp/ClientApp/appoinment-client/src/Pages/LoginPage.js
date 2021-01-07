@@ -16,16 +16,23 @@ class LoginPage extends React.Component {
     } else {
       render = <RegisterForm></RegisterForm>;
     }
-    return <span>{render}</span>;
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        {render}
+      </div>
+    );
   }
 }
 const mapStateToProps = (state) => {
   return {
-    tokenResponse: state.token.tokenResponse,
-    isLoaded: state.token.isLoaded,
-    isFail: state.token.isFail,
-    isConnected: state.token.isConnected,
-    register: state.token.register,
+    register: state.token.register_model,
   };
 };
 

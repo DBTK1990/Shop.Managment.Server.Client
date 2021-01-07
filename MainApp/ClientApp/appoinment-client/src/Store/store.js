@@ -1,9 +1,16 @@
 import { combineReducers, createStore, applyMiddleware, compose } from "redux";
 import TokenReducer from "./Slices/siteSlice";
 import thunk from "redux-thunk";
-const rootReducer = combineReducers({
-  token: TokenReducer,
-});
+import { connectRouter, routerMiddleware } from "connected-react-router";
+import { createBrowserHistory } from "history";
+
+export const history = createBrowserHistory();
+
+const rootReducer = (history) =>
+  combineReducers({
+    token: TokenReducer,
+    router: connectRouter(history),
+  });
 
 const composeEnhancers =
   typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -13,10 +20,11 @@ const composeEnhancers =
     : compose;
 
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk)
+  applyMiddleware(thunk, routerMiddleware(history))
+
   // other store enhancers if any
 );
 
-export const store = createStore(rootReducer, enhancer);
+export const store = createStore(rootReducer(history), enhancer);
 
 //export const store = createStore(rootReducer, applyMiddleware(thunk));

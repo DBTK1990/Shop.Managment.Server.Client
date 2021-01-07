@@ -30,6 +30,11 @@ namespace MainApp
             services.AddAppDbContext(Configuration);
             services.AddMySecurity(Configuration);
             services.AddClientReact();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            });
             #endregion
             services.AddControllers();
         }
@@ -56,11 +61,11 @@ namespace MainApp
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireCors("AllowSpecificOrigin");
             });
             #region Init React Client App
             app.InitClientAppReact(env.IsDevelopment());

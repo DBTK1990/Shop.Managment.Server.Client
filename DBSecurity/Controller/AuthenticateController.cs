@@ -61,7 +61,7 @@ namespace Security.Controllers
                 {
                     token = handler.WriteToken(token),
                     expiration = token.ValidTo,
-                    refresh_token = refresh_token.Token
+                    refresh_token = refresh_token.Token,
                 });
             }
             return Unauthorized();
@@ -134,7 +134,7 @@ namespace Security.Controllers
         {
             var userExists = await userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status409Conflict, new Response { Status = "Error", Message = "User already exists!" });
 
             ApplicationUser user = new ApplicationUser()
             {
@@ -144,7 +144,7 @@ namespace Security.Controllers
             };
             var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again.", Data = result.Errors.Select(el => el.Description).ToList() });
+                return StatusCode(StatusCodes.Status409Conflict, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again.", ErrorData = result.Errors.Select(el => el.Description).ToList() });
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Security.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
+using System.Linq.Expressions;
 
 namespace BL.Controllers
 {
@@ -41,34 +42,9 @@ namespace BL.Controllers
 
             page_number--;
             var query = _context.Appointments;
-
-            IOrderedQueryable<Appointment> res = null;
-            if (data.Filter.Equals("date"))
-            {
-                if (data.Order == 1)
-                {
-                    res = query.OrderBy(el => el.Date_Set);
-                }
-                else
-                {
-                    res = query.OrderByDescending(el => el.Date_Set);
-
-                }
-            }
-            else if (data.Filter.Equals("name"))
-            {
-                if (data.Order == 1)
-                {
-                    res = query.OrderBy(el => el.Username);
-                }
-                else
-                {
-                    res = query.OrderByDescending(el => el.Username);
-
-                }
-
-
-            }
+            Expression<Func<Appointment, object>> expression = data.Filter.Equals("date") ? el => el.Date_Set : el => el.Username;
+            
+            var res = data.Order == 1 ? query.OrderBy(expression): query.OrderByDescending(expression) ;
 
 
             return Ok(new

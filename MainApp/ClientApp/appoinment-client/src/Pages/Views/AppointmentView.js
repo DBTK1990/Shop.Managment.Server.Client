@@ -12,9 +12,6 @@ class AppointmentView extends Component {
   constructor(props) {
     super();
   }
-  componentDidMount() {
-    this.props.pager(1);
-  }
 
   render() {
     const {
@@ -69,7 +66,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     pager: (page_num, filter, order) =>
       dispatch(appointmentThunk.pager({ page_num, filter, order })),
-    details: (id) => dispatch(appointmentThunk.details(id)),
     create: (date) => dispatch(appointmentThunk.create(date)),
     edit: (id, date) => dispatch(appointmentThunk.edit({ id, date })),
     delete: (id) => dispatch(appointmentThunk.delete(id)),

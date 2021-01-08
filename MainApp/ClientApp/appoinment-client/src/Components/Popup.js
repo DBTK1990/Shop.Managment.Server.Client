@@ -12,10 +12,23 @@ class Popup extends Component {
     this.state = {
       show: props.show,
       date: props.mode === "new" ? new Date() : props.form_edit.date,
+      changed: false,
     };
   }
   ConvertToDatetimeHtmlValue = (date) =>
     datetime.format(date, "YYYY-MM-DDTHH:mm:ss");
+
+  static getDerivedStateFromProps(props, state) {
+    if (
+      props.form_edit.date &&
+      props.form_edit.date !== state.date &&
+      !state.changed
+    ) {
+      return {
+        date: props.form_edit.date,
+      };
+    } else return { changed: false };
+  }
 
   handelSubmit = (e) => {
     const { mode, form_edit } = this.props;
@@ -30,19 +43,20 @@ class Popup extends Component {
   };
   handleChange = (e) => {
     const { value } = e.currentTarget;
-    this.setState({ date: new Date(value) });
+    this.setState({ date: new Date(value), changed: true });
+  };
+  handleHide = () => {
+    this.props.closeAppointmentModel();
   };
   render() {
+    const { date } = this.state;
+    const { show, form_edit, mode } = this.props;
+
     return (
-      <Modal
-        show={this.props.show}
-        onHide={() => {
-          this.props.closeAppointmentModel();
-        }}
-      >
+      <Modal show={show} onHide={this.handleHide}>
         <Modal.Header closeButton>
           <Modal.Title>
-            appointment number {this.props.form_edit.id}
+            {mode} appointment {mode === "edit" ? `number ${form_edit.id}` : ""}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -53,7 +67,7 @@ class Popup extends Component {
                 type="datetime-local"
                 placeholder="Date"
                 onChange={this.handleChange}
-                value={this.ConvertToDatetimeHtmlValue(this.state.date)}
+                value={this.ConvertToDatetimeHtmlValue(date)}
               />
             </Form.Group>
             <Form.Group controlId="submit_button">

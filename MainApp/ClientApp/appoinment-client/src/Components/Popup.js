@@ -32,11 +32,11 @@ class Popup extends Component {
 
   handelSubmit = (e) => {
     const { mode, form_edit } = this.props;
-    let value = e.target[0].value;
+    const { date } = this.state;
     if (mode === "new") {
-      this.props.onSave(value);
+      this.props.onSave(date);
     } else {
-      this.props.onSave(form_edit.id, this.state.date);
+      this.props.onSave(form_edit.id, date);
     }
     this.props.closeAppointmentModel();
     e.preventDefault();

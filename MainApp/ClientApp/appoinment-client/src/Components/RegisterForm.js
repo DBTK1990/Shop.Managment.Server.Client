@@ -10,7 +10,7 @@ class RegisterForm extends React.Component {
     super();
   }
   handelSubmit = (event) => {
-    var form = event.currentTarget;
+    let form = event.currentTarget;
     event.preventDefault();
     this.props.register(form[0].value, form[2].value, form[1].value);
   };
@@ -75,7 +75,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     registerClose: () => dispatch(registerClose()),
     register: (username, password, email) => {
-      var register_model = new RegisterModel(username, password, email);
+      let register_model = new RegisterModel(username, password, email);
       return dispatch(authThunk.register(register_model));
     },
   };

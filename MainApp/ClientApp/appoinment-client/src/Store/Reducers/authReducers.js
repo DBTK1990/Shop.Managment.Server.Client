@@ -5,7 +5,7 @@ import { registerErrorAuth } from "../Helpers/reduxUtil";
 export const authThunk = {
   login: createAsyncThunk("token/login", async (login_model, thunkAPI) => {
     try {
-      var response = await auth.getTokenByLoginCredentials(login_model);
+      let response = await auth.getTokenByLoginCredentials(login_model);
       return {
         token: response.data,
         username: login_model.username,

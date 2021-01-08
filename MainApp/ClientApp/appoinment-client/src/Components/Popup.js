@@ -32,7 +32,7 @@ class Popup extends Component {
 
   handelSubmit = (e) => {
     const { mode, form_edit } = this.props;
-    var value = e.target[0].value;
+    let value = e.target[0].value;
     if (mode === "new") {
       this.props.onSave(value);
     } else {

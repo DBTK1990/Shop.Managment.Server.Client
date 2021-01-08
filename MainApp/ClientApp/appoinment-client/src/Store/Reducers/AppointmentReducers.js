@@ -25,8 +25,8 @@ export const appointmentThunk = {
     try {
       await checkConnection(thunkAPI);
       const { tokenResponse } = thunkAPI.getState().token;
-      var api = new appointment_api(tokenResponse.token);
-      var response = await api.getDetailsById(id);
+      let api = new appointment_api(tokenResponse.token);
+      let response = await api.getDetailsById(id);
       return response.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err);
@@ -40,8 +40,8 @@ export const appointmentThunk = {
         pagerQuery,
         table_page_num,
       } = thunkAPI.getState().token;
-      var api = new appointment_api(tokenResponse.token);
-      var response = await api.create(date);
+      let api = new appointment_api(tokenResponse.token);
+      let response = await api.create(date);
       thunkAPI.dispatch(
         appointmentThunk.pager({
           page_num: table_page_num,
@@ -63,8 +63,8 @@ export const appointmentThunk = {
         pagerQuery,
         table_page_num,
       } = thunkAPI.getState().token;
-      var api = new appointment_api(tokenResponse.token);
-      var response = await api.edit(id, date);
+      let api = new appointment_api(tokenResponse.token);
+      let response = await api.edit(id, date);
       thunkAPI.dispatch(
         appointmentThunk.pager({
           page_num: table_page_num,
@@ -81,9 +81,9 @@ export const appointmentThunk = {
   delete: createAsyncThunk("appointment/delete", async (id, thunkAPI) => {
     try {
       await checkConnection();
-      var { token, pagerQuery, table_page_num } = thunkAPI.getState();
-      var api = new appointment_api(token.tokenResponse.token);
-      var response = await api.delete(id);
+      let { token, pagerQuery, table_page_num } = thunkAPI.getState();
+      let api = new appointment_api(token.tokenResponse.token);
+      let response = await api.delete(id);
       thunkAPI.dispatch(
         appointmentThunk.pager({
           page_num: table_page_num,

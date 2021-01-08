@@ -12,7 +12,7 @@ class AuthService {
     if (!(login_model instanceof LoginModel)) {
       throw new Error("function signature prop is not from type LoginModel");
     }
-    var url = `${this.baseAddress}${this.controllerUri}${this.paths[0]}`;
+    let url = `${this.baseAddress}${this.controllerUri}${this.paths[0]}`;
 
     return axios.post(url, login_model);
   }
@@ -21,9 +21,9 @@ class AuthService {
     if (typeof ref_token !== "string") {
       throw new Error("function signature prop is not from type string");
     }
-    var url = `${this.baseAddress}${this.controllerUri}${this.paths[1]}`;
+    let url = `${this.baseAddress}${this.controllerUri}${this.paths[1]}`;
 
-    var data = new FormData();
+    let data = new FormData();
     data.append("refresh_token", ref_token);
 
     return axios.post(url, data);
@@ -33,9 +33,9 @@ class AuthService {
     if (typeof ref_token !== "string") {
       throw new Error("function signature prop is not from type string");
     }
-    var url = `${this.baseAddress}${this.controllerUri}${this.paths[2]}`;
+    let url = `${this.baseAddress}${this.controllerUri}${this.paths[2]}`;
 
-    var data = new FormData();
+    let data = new FormData();
     data.append("token", token);
 
     return axios.post(url, data);
@@ -47,7 +47,7 @@ class AuthService {
         "function signature prop register_model is not from type RegisterModel"
       );
     }
-    var url = `${this.baseAddress}${this.controllerUri}${this.paths[3]}`;
+    let url = `${this.baseAddress}${this.controllerUri}${this.paths[3]}`;
 
     return axios.post(url, register_model);
   }

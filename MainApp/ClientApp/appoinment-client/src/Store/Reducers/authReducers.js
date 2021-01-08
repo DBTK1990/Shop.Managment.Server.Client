@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import auth from "../../Services/AuthService/AuthService";
+import { registerErrorAuth } from "../Helpers/reduxUtil";
 
 export const authThunk = {
   login: createAsyncThunk("token/login", async (login_model, thunkAPI) => {
@@ -24,47 +25,48 @@ export const authThunk = {
       }
     }
   ),
-  isValid: createAsyncThunk("token/valid", async (token, thunkAPI) => {
-    try {
-      var response = await auth.isTokenValid(token);
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err);
+  reinitConnection: createAsyncThunk(
+    "token/reinitConnection",
+    async (noUse, thunkAPI) => {
+      try {
+        const { tokenResponse } = thunkAPI.getState().token;
+        const expiration = new Date(tokenResponse.expiration);
+        const now = new Date();
+        let response = null;
+        if (tokenResponse && expiration >= now) {
+          response = await auth.getTokenByRefreshToken(
+            tokenResponse.refresh_token
+          );
+        }
+        return response;
+      } catch (err) {
+        return thunkAPI.rejectWithValue(err);
+      }
     }
-  }),
+  ),
 };
 
 const authExtraReducer = {
+  [authThunk.reinitConnection.fulfilled]: (state, action) => {
+    if (action.payload.data) {
+      state.tokenResponse = action.payload.data;
+    }
+  },
   [authThunk.login.fulfilled]: (state, action) => {
-    // Add user to the state array
-
     state.tokenResponse = action.payload.token;
     state.username = action.payload.username;
 
     state.isAuthenticated = true;
   },
   [authThunk.login.rejected]: (state, action) => {
-    // Add user to the state array
-    debugger;
     const { data } = action.payload.response;
 
-    state.error_model.show = true;
-    state.error_model.heading = `${data.title}`;
-    state.error_model.body = data.errorData
-      ? data.errorData.join("\n")
-      : data.title ?? data.message;
+    registerErrorAuth(state, data);
   },
   [authThunk.register.rejected]: (state, action) => {
-    // Add user to the state array
-
     const { data } = action.payload.response;
 
-    state.error_model.show = true;
-    state.error_model.heading = `${data.title}`;
-    state.error_model.body = data.errorData
-      ? data.errorData.join("\n")
-      : data.title ?? data.message;
-    //state.errorMsg = action.payload.message;
+    registerErrorAuth(state, data);
   },
 };
 export default authExtraReducer;

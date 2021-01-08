@@ -12,6 +12,7 @@ export class MyTable extends Component {
       filter: "date",
       order: 1,
     };
+    props.pager(props.page_num);
   }
 
   toggleFilter = (e) => {

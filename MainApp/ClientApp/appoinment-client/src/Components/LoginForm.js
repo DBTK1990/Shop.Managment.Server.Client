@@ -20,10 +20,10 @@ class LoginForm extends React.Component {
       return {
         isAuth: props.isAuth,
       };
-    }
+    } else return null;
   }
   handleSubmit = (event) => {
-    var form = event.currentTarget;
+    let form = event.currentTarget;
     this.props.login(form[0].value, form[1].value);
     event.preventDefault();
   };
@@ -83,7 +83,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     registerOpen: () => dispatch(registerOpen()),
     login: (username, password) => {
-      var login_model = new LoginModel(username, password);
+      let login_model = new LoginModel(username, password);
       return dispatch(authThunk.login(login_model));
     },
   };

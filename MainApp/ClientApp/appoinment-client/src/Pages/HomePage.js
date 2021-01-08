@@ -2,7 +2,6 @@ import React from "react";
 import { Container, Nav, Navbar, Row } from "react-bootstrap";
 import { connect } from "react-redux";
 import { Link, Route, Switch } from "react-router-dom";
-import ErrorAlert from "../Components/ErrorAlert";
 import Logout from "../Components/Logout";
 import { openLogout } from "../Store/Slices/siteSlice";
 import AppointmentView from "./Views/AppointmentView";

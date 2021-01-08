@@ -1,4 +1,4 @@
-﻿import React, { Component } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 
@@ -6,8 +6,7 @@ export class ProtectedPages extends Component {
   render() {
     const { auth, children } = this.props;
 
-    return auth 
-     ? children : <Redirect to="/login" />;
+    return auth ? children : <Redirect to="/login" />;
   }
 }
 

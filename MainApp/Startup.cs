@@ -1,17 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using BL.Setup;
 using Security.Setup;
+
 namespace MainApp
 {
     public class Startup
@@ -35,6 +29,7 @@ namespace MainApp
                 options.AddPolicy("AllowSpecificOrigin",
                     builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
+          
             #endregion
             services.AddControllers();
         }
@@ -54,11 +49,12 @@ namespace MainApp
 
 
             #endregion
-          
+
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCors();

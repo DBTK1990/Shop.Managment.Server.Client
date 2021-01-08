@@ -43,8 +43,8 @@ namespace BL.Controllers
             page_number--;
             var query = _context.Appointments;
             Expression<Func<Appointment, object>> expression = data.Filter.Equals("date") ? el => el.Date_Set : el => el.Username;
-            
-            var res = data.Order == 1 ? query.OrderBy(expression): query.OrderByDescending(expression) ;
+
+            var res = data.Order == 1 ? query.OrderBy(expression) : query.OrderByDescending(expression);
 
 
             return Ok(new
@@ -117,6 +117,7 @@ namespace BL.Controllers
         [Route("edit/{id}")]
         public async Task<IActionResult> Edit([FromBody] Appointment new_doc, int id)
         {
+            new_doc.Date_Set = new_doc.Date_Set.ToLocalTime();
             if (!string.IsNullOrWhiteSpace(new_doc.Username))
             {
                 return BadRequest(new { errorcode = 11, error = "remove username from request body" });

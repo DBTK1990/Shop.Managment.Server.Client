@@ -95,7 +95,7 @@ namespace BL.Controllers
 
             new_doc.UserId = user.Id;
             new_doc.Username = user.UserName;
-
+            new_doc.Date_Set = new_doc.Date_Set.ToLocalTime();
 
             _context.Appointments.Add(new_doc);
 
@@ -117,7 +117,6 @@ namespace BL.Controllers
         [Route("edit/{id}")]
         public async Task<IActionResult> Edit([FromBody] Appointment new_doc, int id)
         {
-            new_doc.Date_Set = new_doc.Date_Set.ToLocalTime();
             if (!string.IsNullOrWhiteSpace(new_doc.Username))
             {
                 return BadRequest(new { errorcode = 11, error = "remove username from request body" });
@@ -135,6 +134,7 @@ namespace BL.Controllers
 
             new_doc.UserId = user.Id;
             new_doc.Username = user.UserName;
+            new_doc.Date_Set = new_doc.Date_Set.ToLocalTime();
 
             var ref_doc = _context.Appointments.FirstOrDefault(el => el.UserId == new_doc.UserId && el.Id.Equals(id));
 

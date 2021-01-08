@@ -16,11 +16,11 @@ class LoginForm extends React.Component {
     };
   }
   static getDerivedStateFromProps(props, state) {
-    return {
-      isFail: props.isFail,
-      errorMsg: props.errorMsg,
-      isAuth: props.isAuth,
-    };
+    if (props.isAuth !== state.isAuth) {
+      return {
+        isAuth: props.isAuth,
+      };
+    }
   }
   handleSubmit = (event) => {
     var form = event.currentTarget;

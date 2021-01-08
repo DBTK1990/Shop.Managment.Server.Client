@@ -10,7 +10,7 @@ class RegisterForm extends React.Component {
     super();
   }
   handelSubmit = (event) => {
-    let form = event.currentTarget;
+    const form = event.currentTarget;
     event.preventDefault();
     this.props.register(form[0].value, form[2].value, form[1].value);
   };
@@ -19,16 +19,14 @@ class RegisterForm extends React.Component {
   };
   render() {
     const { isAuth } = this.props;
+    const style = {
+      width: "300px",
+      margin: "auto",
+      background: "rgb(89 99 102 / 23%)",
+      fontSize: "15px",
+    };
     return !isAuth ? (
-      <div
-        className="card p-3"
-        style={{
-          width: "300px",
-          margin: "auto",
-
-          background: "rgb(89 99 102 / 23%)",
-        }}
-      >
+      <div className="card p-3" style={style}>
         <Form onSubmit={this.handelSubmit}>
           <Form.Group controlId="formGroupUsername">
             <Form.Label>Username</Form.Label>
@@ -43,14 +41,11 @@ class RegisterForm extends React.Component {
             <Form.Control type="password" placeholder="Password" />
           </Form.Group>
           <Form.Row>
-            <Col lg="6">
-              <Button style={{ fontSize: "15px" }} type="submit">
-                register
-              </Button>
+            <Col>
+              <Button type="submit">register</Button>
             </Col>
             <Col>
               <Button
-                style={{ fontSize: "15px" }}
                 className="float-right"
                 type="button"
                 onClick={this.CloseRegister}

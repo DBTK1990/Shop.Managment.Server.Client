@@ -5,7 +5,7 @@ import Pager from "./Pager";
 import MyRows from "./MyRows";
 import { filterTableToggle } from "../../Store/Slices/siteSlice";
 
-export class MyTable extends Component {
+class MyTable extends Component {
   constructor(props) {
     super();
     this.state = {
@@ -17,15 +17,13 @@ export class MyTable extends Component {
 
   toggleFilter = (e) => {
     const { key } = e.currentTarget.dataset;
+    const { page_num, pagerQuery } = this.props;
     this.props.toggleFilterStore(key);
-    this.props.pager(
-      this.props.page_num,
-      this.props.pagerQuery.filter,
-      this.props.pagerQuery.order
-    );
+    this.props.pager(page_num, pagerQuery.filter, pagerQuery.order);
   };
 
   render() {
+    const { pager, page_count } = this.props;
     return (
       <Container>
         <Row>
@@ -43,16 +41,12 @@ export class MyTable extends Component {
               </tr>
             </thead>
             <tbody>
-              <MyRows
-                {...this.props}
-                data_rows={this.props.row_data}
-                this_user={this.props.this_user}
-              ></MyRows>
+              <MyRows {...this.props}></MyRows>
             </tbody>
           </Table>
         </Row>
         <Row className="justify-content-center">
-          <Pager pager={this.props.pager} count={this.props.page_count} />
+          <Pager pager={pager} count={page_count} />
         </Row>
       </Container>
     );

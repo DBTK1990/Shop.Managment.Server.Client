@@ -11,29 +11,27 @@ class LoginPage extends React.Component {
   }
   render() {
     let render;
-    const { register } = this.props;
-
+    const { register, showError } = this.props;
+    const style = {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100vh",
+      flexDirection: "column",
+      gap: "7px",
+      position: "relative",
+    };
     if (!register) {
       render = <LoginForm></LoginForm>;
     } else {
       render = <RegisterForm></RegisterForm>;
     }
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          flexDirection: "column",
-          gap: "7px",
-          position: "relative",
-        }}
-      >
+      <div style={style}>
         <Row>
           <Col>{render}</Col>
         </Row>
-        <ErrorAlert show={this.props.showError} />
+        <ErrorAlert show={showError} />
       </div>
     );
   }

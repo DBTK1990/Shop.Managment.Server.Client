@@ -11,9 +11,10 @@ class ErrorAlert extends Component {
     this.props.closeError();
   };
   render() {
-    return this.props.show ? (
+    const { show, error_model } = this.props;
+    return show ? (
       <Alert onClose={this.handelClose} dismissible variant="danger">
-        <p>{this.props.error_model.body}</p>
+        <p>{error_model.body}</p>
       </Alert>
     ) : null;
   }

@@ -23,7 +23,7 @@ class LoginForm extends React.Component {
     } else return null;
   }
   handleSubmit = (event) => {
-    let form = event.currentTarget;
+    const form = event.currentTarget;
     this.props.login(form[0].value, form[1].value);
     event.preventDefault();
   };
@@ -32,16 +32,13 @@ class LoginForm extends React.Component {
   };
   render() {
     const { isAuth } = this.props;
-
+    const style = {
+      width: "300px",
+      margin: "auto",
+      background: "rgb(89 99 102 / 23%)",
+    };
     return !isAuth ? (
-      <div
-        className="card p-3"
-        style={{
-          width: "300px",
-          margin: "auto",
-          background: "rgb(89 99 102 / 23%)",
-        }}
-      >
+      <div className="card p-3" style={style}>
         <Form onSubmit={this.handleSubmit}>
           <Form.Group controlId="formGroupEmail">
             <Form.Label>Username</Form.Label>
@@ -52,7 +49,7 @@ class LoginForm extends React.Component {
             <Form.Control type="password" placeholder="Password" />
           </Form.Group>
           <Form.Row>
-            <Col lg="6">
+            <Col>
               <Button type="submit">Sign-In</Button>
             </Col>
             <Col>

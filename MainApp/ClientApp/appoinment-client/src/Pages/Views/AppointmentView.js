@@ -12,36 +12,22 @@ class AppointmentView extends Component {
   constructor(props) {
     super();
   }
-
+  openCreateAppointment = () => {
+    this.props.openAppointmentModel("new", null, null);
+  };
   render() {
-    const {
-      row_data,
-      page_count,
-      create,
-      appointment_model,
-      edit,
-    } = this.props;
+    const { row_data, create, appointment_model, edit, showError } = this.props;
     return (
       <Container>
         <Row>
           <Col>
-            <Button
-              className="my-4"
-              onClick={() => {
-                this.props.openAppointmentModel("new", null, null);
-              }}
-            >
+            <Button className="my-4" onClick={this.openCreateAppointment}>
               Create new Appointment
             </Button>
           </Col>
         </Row>
         <Row>
-          <Table
-            align="center"
-            {...this.props}
-            row_data={row_data ?? []}
-            page_count={page_count ?? 1}
-          />
+          <Table align="center" {...this.props} />
         </Row>
         <Popup
           row_data={row_data ?? []}
@@ -49,7 +35,7 @@ class AppointmentView extends Component {
           mode={appointment_model.mode}
           onSave={appointment_model.mode === "new" ? create : edit}
         />
-        <ErrorAlert show={this.props.showError} />
+        <ErrorAlert show={showError} />
       </Container>
     );
   }

@@ -13,8 +13,11 @@ class OptionsCol extends Component {
     this.props.delete(this.props.assignId);
   };
   ui_edit = () => {
-    let date = this.props.data_rows.find((el) => el.id === this.props.assignId);
-    this.props.openAppointmentModel("edit", this.props.assignId, date.date_Set);
+    const { assignId } = this.props;
+    const date = this.props.row_data.find(
+      (el) => el.id === this.props.assignId
+    );
+    this.props.openAppointmentModel("edit", assignId, date.date_Set);
   };
   render() {
     const { restricted } = this.props;

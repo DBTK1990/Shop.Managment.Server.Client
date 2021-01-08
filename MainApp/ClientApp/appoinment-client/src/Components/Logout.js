@@ -8,7 +8,6 @@ import { closeLogout, logout } from "../Store/Slices/siteSlice";
 class LogOut extends React.Component {
   constructor(props) {
     super();
- 
   }
 
   close = (e) => {
@@ -21,14 +20,13 @@ class LogOut extends React.Component {
   };
   render() {
     const { show } = this.props;
-    console.log(this.props);
     return (
       <>
         <Modal
           show={show}
           onHide={this.close}
           backdrop="static"
-          keyboard={false}
+          keyboard={true}
         >
           <Modal.Header closeButton>
             <Modal.Title>Logout</Modal.Title>

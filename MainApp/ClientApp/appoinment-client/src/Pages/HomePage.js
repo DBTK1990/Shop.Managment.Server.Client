@@ -12,15 +12,16 @@ class HomePage extends React.Component {
     super();
     this.state = { logout: props.logout_model };
   }
-  openLogout = (event) => {
+  openLogout = () => {
     this.props.openLogout();
   };
 
   render() {
-    console.log(this.props);
+    const { username, logout_model } = this.props;
+    const style = { position: "relative" };
     return (
-      <div style={{ position: "relative" }}>
-        <Logout show={this.props.logout_model}></Logout>
+      <div style={style}>
+        <Logout show={logout_model}></Logout>
         <Navbar bg="dark" variant="dark">
           <Link className="navbar-brand" to="/home">
             Dog Barber
@@ -28,14 +29,14 @@ class HomePage extends React.Component {
 
           <Nav className="mr-auto">
             <Link className="nav-link" to="/home/Appointments">
-              Appoinments
+              Appointments
             </Link>
             <Nav.Link onClick={this.openLogout}>Log-out</Nav.Link>
           </Nav>
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text>
-              Signed in as: <a href="home">{this.props.username}</a>
+              Signed in as: <a href="home">{username}</a>
             </Navbar.Text>
           </Navbar.Collapse>
         </Navbar>

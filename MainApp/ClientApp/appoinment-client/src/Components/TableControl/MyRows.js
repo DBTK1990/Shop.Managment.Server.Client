@@ -7,9 +7,9 @@ export default class MyRows extends Component {
   }
 
   render() {
-    const { data_rows, this_user } = this.props;
-    return data_rows
-      ? data_rows.map((el) => {
+    const { row_data, this_user } = this.props;
+    return row_data
+      ? row_data.map((el) => {
           return (
             <tr align="center" key={el.id}>
               <td>{el.username}</td>
@@ -23,6 +23,6 @@ export default class MyRows extends Component {
             </tr>
           );
         })
-      : "";
+      : null;
   }
 }

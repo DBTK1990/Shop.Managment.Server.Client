@@ -14,6 +14,7 @@ export default class Pager extends Component {
   };
   render() {
     const { count } = this.props;
+    const { selected } = this.state;
     const repeater = [];
     for (let index = 0; index < count; index++) {
       repeater.push(index + 1);
@@ -26,7 +27,7 @@ export default class Pager extends Component {
             <Pagination.Item
               onClick={this.moveToPage.bind(null, el)}
               key={el}
-              active={this.state.selected === el}
+              active={selected === el}
             >
               {el}
             </Pagination.Item>

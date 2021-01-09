@@ -11,6 +11,7 @@ using Security.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using System.Linq.Expressions;
+using Microsoft.Data.SqlClient;
 
 namespace BL.Controllers
 {
@@ -21,6 +22,7 @@ namespace BL.Controllers
     {
         private readonly AppContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+
         public AppointmentsController(AppContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -41,11 +43,12 @@ namespace BL.Controllers
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             page_number--;
-            var query = _context.Appointments;
+            var now = DateTime.Now.ToLocalTime();
+            var query = _context.Appointments.Where(el => el.Date_Set >= now);
             Expression<Func<Appointment, object>> expression = data.Filter.Equals("date") ? el => el.Date_Set : el => el.Username;
 
             var res = data.Order == 1 ? query.OrderBy(expression) : query.OrderByDescending(expression);
-
+            var test = res.AsEnumerable().Skip(page_number * 10).Take(10).ToList();
 
             return Ok(new
             {
@@ -78,11 +81,12 @@ namespace BL.Controllers
         [Route("create")]
         public async Task<IActionResult> Create([FromBody] Appointment new_doc)
         {
+            new_doc.Date_Set = new_doc.Date_Set.ToLocalTime();
             if (!string.IsNullOrWhiteSpace(new_doc.Username))
             {
                 return BadRequest(new { errorcode = 11, error = "remove username from request body" });
             }
-            else if (_context.Appointments.Any(el => el.Date_Set <= new_doc.Date_Set && new_doc.Date_Set <= el.Date_Set.AddMinutes(45)))
+            else if (_context.Appointments.ToList().Any(el => el.Date_Set <= new_doc.Date_Set && new_doc.Date_Set <= el.Date_Set.AddMinutes(45)))
             {
                 return Conflict(new { errorcode = 12, error = "appoinment has allready been set in the time range" });
             }
@@ -95,7 +99,7 @@ namespace BL.Controllers
 
             new_doc.UserId = user.Id;
             new_doc.Username = user.UserName;
-            new_doc.Date_Set = new_doc.Date_Set.ToLocalTime();
+
 
             _context.Appointments.Add(new_doc);
 
@@ -117,6 +121,8 @@ namespace BL.Controllers
         [Route("edit/{id}")]
         public async Task<IActionResult> Edit([FromBody] Appointment new_doc, int id)
         {
+
+            new_doc.Date_Set = new_doc.Date_Set.ToLocalTime();
             if (!string.IsNullOrWhiteSpace(new_doc.Username))
             {
                 return BadRequest(new { errorcode = 11, error = "remove username from request body" });
@@ -130,11 +136,11 @@ namespace BL.Controllers
                 return Conflict(new { errorcode = 13, error = "we dont have a time machine yet..." });
             }
 
+
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             new_doc.UserId = user.Id;
             new_doc.Username = user.UserName;
-            new_doc.Date_Set = new_doc.Date_Set.ToLocalTime();
 
             var ref_doc = _context.Appointments.FirstOrDefault(el => el.UserId == new_doc.UserId && el.Id.Equals(id));
 
@@ -159,11 +165,12 @@ namespace BL.Controllers
         {
             ApplicationUser user = await _userManager.FindByNameAsync(User.Identity.Name);
 
-            var ref_doc_remove_from_entity = _context.Appointments.FirstOrDefault(el => el.UserId.Equals(user.Id) && el.Id.Equals(id));
-            var ref_doc = _context.Database.ExecuteSqlInterpolated($"exec [dbo].DeleteAppointment {id} ,'{user.Id}'");
-            if (ref_doc_remove_from_entity != null)
+            var temp_id = new SqlParameter("@id", id);
+            var temp_userId = new SqlParameter("@userId", user.Id);
+            var ref_doc=_context.Appointments.FromSqlRaw($"exec [dbo].DeleteAppointment @id ,@userId", temp_id, temp_userId).ToList();
+            if (ref_doc.Any())
             {
-                _context.Appointments.Remove(ref_doc_remove_from_entity);
+         
                 return Ok(ref_doc);
             }
 

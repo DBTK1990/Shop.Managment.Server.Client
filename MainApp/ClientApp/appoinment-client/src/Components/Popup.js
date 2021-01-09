@@ -19,15 +19,24 @@ class Popup extends Component {
     datetime.format(date, "YYYY-MM-DDTHH:mm:ss");
 
   static getDerivedStateFromProps(props, state) {
+    let res = null;
+    const dateNow = new Date();
     if (
       props.form_edit.date &&
       props.form_edit.date !== state.date &&
       !state.changed
     ) {
-      return {
+      res = {
         date: props.form_edit.date,
       };
-    } else return { changed: false };
+    } else if (state.date && state.date !== dateNow && !state.changed) {
+      res = { date: dateNow };
+    } else if (state.changed) {
+      res = { changed: false };
+    } else {
+      res = null;
+    }
+    return res;
   }
 
   handelSubmit = (e) => {

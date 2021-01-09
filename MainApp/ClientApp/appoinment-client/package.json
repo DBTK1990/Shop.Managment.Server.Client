@@ -10,6 +10,8 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "date-and-time": "^0.14.2",
+    "ini": "^2.0.0",
+    "node-notifier": "^9.0.0",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",
     "react-dom": "^17.0.1",

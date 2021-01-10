@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <SpaRoot>ClientApp/appoinment-client</SpaRoot>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +23,11 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Remove="ClientApp/appoinment-client%2a%2a" />
   </ItemGroup>
 
 

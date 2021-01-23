@@ -1,4 +1,4 @@
-Dog Barber shop management client
+Dog Barber shop management server\client
 
 *remark: can easily transform to {genric_shop_name}
 

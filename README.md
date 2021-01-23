@@ -14,7 +14,7 @@ Project Stack
 - Redux React - as a client for web
 
 Project Setup:
-1. change connection string on app settings query string or use the default
+1. change connection string on app settings string or use the default
 2. run the project with dotnet run or play on visual studio 2019
 
 *remark: the first run will take a minute or so , the project build is installing the required npm packages for the client app
